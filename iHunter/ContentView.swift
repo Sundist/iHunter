@@ -14,6 +14,8 @@ struct ContentView: View {
         Tool(name: "Ağ Paneli", subtitle: "Cihaz ve yerel ağ bilgisi", systemImage: "wifi", color: Theme.info, destination: AnyView(DashboardView())),
         Tool(name: "Host Tarayıcı", subtitle: "Yerel ağda canlı cihazları keşfet", systemImage: "dot.radiowaves.left.and.right", color: Theme.accent, destination: AnyView(HostScannerView())),
         Tool(name: "Port Tarayıcı", subtitle: "TCP açık port taraması", systemImage: "lock.open", color: Theme.warning, destination: AnyView(PortScannerView())),
+        Tool(name: "Zafiyet Analizi", subtitle: "Servis/banner + yanlış yapılandırma + CVE", systemImage: "ladybug", color: Theme.danger, destination: AnyView(VulnInsightView())),
+        Tool(name: "HTTP Repeater", subtitle: "Elle istek oluştur & incele (Burp-lite)", systemImage: "paperplane", color: Theme.warning, destination: AnyView(RepeaterView())),
         Tool(name: "DNS Çözümleyici", subtitle: "A/AAAA ve ters DNS", systemImage: "globe", color: Theme.info, destination: AnyView(DNSView())),
         Tool(name: "HTTP Başlık Denetçisi", subtitle: "Güvenlik başlığı analizi", systemImage: "doc.text.magnifyingglass", color: Theme.accent, destination: AnyView(HTTPHeaderView())),
         Tool(name: "TLS / Sertifika", subtitle: "Sertifika zinciri inceleme", systemImage: "checkmark.seal", color: Theme.info, destination: AnyView(TLSView())),
