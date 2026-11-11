@@ -1,0 +1,19 @@
+[Unit]
+Description=iHunter station agent (Pi pentest control endpoint)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Runs as root because airmon-ng / nmap -sV need privileges.
+Environment=STATION_TOKEN=CHANGE_ME_TO_A_LONG_RANDOM_SECRET
+Environment=STATION_WIFI=wlan1
+Environment=STATION_PORT=8777
+# Bind only to the Pi's hotspot address once you know it (e.g. 10.42.0.1),
+# instead of 0.0.0.0, to avoid exposing the agent on other interfaces:
+Environment=STATION_BIND=0.0.0.0
+ExecStart=/usr/bin/python3 /opt/ihunter/station_agent.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
