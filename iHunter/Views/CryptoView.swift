@@ -35,7 +35,7 @@ struct CryptoView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Girdi").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        Text("Input").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
                         TextEditor(text: $input)
                             .font(Theme.monoSmall)
                             .frame(minHeight: 90)
@@ -50,7 +50,7 @@ struct CryptoView: View {
 
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("İşlem").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        Text("Operation").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 92))], spacing: 8) {
                             ForEach(Operation.allCases) { op in
                                 Button {
@@ -73,7 +73,7 @@ struct CryptoView: View {
                 if !output.isEmpty {
                     Panel {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Çıktı").font(.headline).foregroundStyle(Theme.accent)
+                            Text("Output").font(.headline).foregroundStyle(Theme.accent)
                             Text(output).font(Theme.monoSmall).foregroundStyle(.white).textSelection(.enabled)
                         }
                     }
@@ -83,9 +83,9 @@ struct CryptoView: View {
                     Panel {
                         VStack(alignment: .leading, spacing: 6) {
                             HStack {
-                                Text("Parola entropisi").font(.headline).foregroundStyle(.white)
+                                Text("Password entropy").font(.headline).foregroundStyle(.white)
                                 Spacer()
-                                TagLabel(text: "\(Int(entropy)) bit", color: entropyColor)
+                                TagLabel(text: "\(Int(entropy)) bits", color: entropyColor)
                             }
                             Text(entropyLabel).font(.footnote).foregroundStyle(entropyColor)
                         }
@@ -103,8 +103,8 @@ struct CryptoView: View {
         return Theme.accent
     }
     private var entropyLabel: String {
-        if entropy < 40 { return "Zayıf — kolayca kırılabilir." }
-        if entropy < 70 { return "Orta — daha uzun/karmaşık yapın." }
-        return "Güçlü."
+        if entropy < 40 { return "Weak — easily cracked." }
+        if entropy < 70 { return "Medium — make it longer/more complex." }
+        return "Strong."
     }
 }

@@ -1,81 +1,83 @@
 # iHunter
 
-iPhone (iOS) için güvenlik & ağ keşif araç seti. Kali **NetHunter**'dan ilham alır,
-ancak iOS'un izin verdiği sınırlar içinde — **root/jailbreak gerektirmeden** — çalışır.
+A security & network recon toolkit for iPhone (iOS). Inspired by Kali **NetHunter**,
+but running within what iOS allows — **no root/jailbreak required**.
 
-> ⚠️ **Yasal uyarı:** Bu uygulama yalnızca **yetkili güvenlik testi, eğitim ve CTF**
-> içindir. Araçları yalnızca sahibi olduğunuz veya yazılı izniniz olan sistemlerde kullanın.
-> İzinsiz tarama/erişim birçok ülkede suçtur.
+> ⚠️ **Legal notice:** This app is for **authorized security testing, education, and CTF**
+> only. Use the tools only on systems you own or have written permission to test.
+> Unauthorized scanning/access is a crime in many jurisdictions.
 
-## Neden NetHunter birebir iPhone'a taşınamaz?
+## Why can't NetHunter be ported to iPhone 1:1?
 
-Kali NetHunter bir **Android** platformudur ve şunlara dayanır: root, özel kernel,
-Wi-Fi monitor mode + paket enjeksiyonu, USB HID gadget modu, ham soketler. iOS kapalı
-bir sandbox'tır ve bunların hiçbirine izin vermez. Apple App Store da bu tür araçları
-kabul etmez. Dolayısıyla "NetHunter'ı iOS'a port et" teknik olarak mümkün değildir.
+Kali NetHunter is an **Android** platform and depends on: root, custom kernels,
+Wi-Fi monitor mode + packet injection, USB HID gadget mode, raw sockets. iOS is a
+closed sandbox and allows none of these. The Apple App Store also won't accept tools
+of this kind. So "port NetHunter to iOS" is technically impossible.
 
-Bunun yerine iHunter, iOS'ta **gerçekten çalışan** keşif/analiz araçlarını sunar ve
-ağır işler için doğru deseni gösterir: *uzaktaki bir Kali kutusunu iPhone'dan sürmek.*
+Instead, iHunter provides recon/analysis tools that **actually work** on iOS, and
+points at the right pattern for the heavy work: *driving a remote Kali box from the iPhone.*
 
-## Cihazda çalışan araçlar
+## On-device tools
 
-| Araç | Açıklama |
-|------|----------|
-| Ağ Paneli | `getifaddrs` ile arayüz/IP bilgisi, önerilen tarama aralığı |
-| Host Tarayıcı | Yerel alt ağda canlı cihaz keşfi (eşzamanlı TCP connect probe) |
-| Port Tarayıcı | Yaygın portlar veya aralık taraması (TCP connect, `Network.framework`) |
-| DNS Çözümleyici | `getaddrinfo` ile A/AAAA + ters DNS (PTR) |
-| HTTP Başlık Denetçisi | Güvenlik başlığı analizi (HSTS, CSP, X-Frame-Options, bilgi ifşası) |
-| TLS / Sertifika | TLS bağlantısı, sertifika zinciri ve güven değerlendirmesi |
-| Subnet Hesaplayıcı | CIDR / alt ağ matematiği |
-| Kripto & Kodlama | MD5/SHA1/256/512, Base64, Hex, URL, parola entropisi |
-| Referans | Araç fizibilite matrisi + yetkili test rehberi |
+| Tool | Description |
+|------|-------------|
+| Network Panel | Interface/IP info via `getifaddrs`, suggested scan range |
+| Host Scanner | Live-host discovery on the local subnet (concurrent TCP connect probes) |
+| Port Scanner | Common ports or a port range (TCP connect, `Network.framework`) |
+| Vuln Insight | Service/banner + version detection, misconfiguration rules, NVD CVE lookup |
+| Injection Tester | Non-destructive SQLi/XSS **detection** on authorized targets |
+| HTTP Repeater | Craft a request and inspect the response (Burp's Repeater part) |
+| DNS Resolver | A/AAAA + reverse DNS (PTR) via `getaddrinfo` |
+| HTTP Header Inspector | Security-header analysis (HSTS, CSP, X-Frame-Options, info disclosure) |
+| TLS / Certificate | TLS connection, certificate chain, and trust evaluation |
+| Subnet Calculator | CIDR / subnet math |
+| Crypto & Encoding | MD5/SHA1/256/512, Base64, Hex, URL, password entropy |
+| Reference | Tool feasibility matrix + authorized-testing guide |
 
-> Not: SYN/UDP/OS taraması (`nmap -sS/-sU/-O`) root ister → iOS'ta mümkün değil.
-> iHunter TCP connect taraması yapar; bu sandbox'taki tek gerçek vektördür.
+> Note: SYN/UDP/OS scans (`nmap -sS/-sU/-O`) need root → not possible on iOS.
+> iHunter does TCP connect scanning, which is the only real vector in the sandbox.
 
-## iOS'ta mümkün OLMAYAN istekler (dürüst değerlendirme)
+## Requests that are NOT possible on iOS (honest assessment)
 
-| İstenen | Durum | Neden |
-|---------|-------|-------|
-| OpenVAS / Nessus | ❌ iOS'a kurulamaz | Sunucu tabanlı tarayıcı; uzaktaki Kali'de çalıştırıp SSH ile yönetin |
-| Burp Suite / Caido | ❌ sistem MITM yok | iOS sandbox araya girmeye izin vermez; masaüstü proxy'yi uzaktan kullanın |
-| sqlmap | ❌ çalışmaz | Python aracı; Kali kutusunda çalıştırın |
-| Metasploit | ❌ kurulamaz | Ruby + ham soket + root; yalnızca kontrol ettiğiniz Kali'de |
-| aircrack-ng / airmon-ng | ❌ imkânsız | iOS Wi-Fi radyosu monitor mode / enjeksiyona açılmaz (jailbreak'te bile) |
+| Requested | Status | Why |
+|-----------|--------|-----|
+| OpenVAS / Nessus (full engine) | ❌ can't install | Server-based scanner; run on a Kali box and manage over SSH. iHunter ships a lightweight *detection* subset (Vuln Insight). |
+| Burp Suite / Caido (system proxy) | ❌ no system MITM | iOS sandbox forbids intercepting other apps. iHunter ships the Repeater subset. |
+| sqlmap (automated exploitation) | ❌ no DB dumping | Python tool. iHunter does SQLi/XSS *detection* only; run sqlmap on a Kali box. |
+| Metasploit | ❌ can't install | Ruby + raw sockets + root; only on a Kali box you control. |
+| aircrack-ng / airmon-ng | ❌ impossible | iOS Wi-Fi radio never opens for monitor mode / injection (not even jailbroken). |
 
-## Gerçekçi mimari: iPhone'u "kontrol terminali" yapın
+## Realistic architecture: make the iPhone a "control terminal"
 
-Pentester'ların iPhone ile gerçekte yaptığı şey:
+What pentesters actually do with an iPhone:
 
-1. Kontrol ettiğiniz bir **Kali Linux kutusu** kurun (bulut droplet, Raspberry Pi,
-   ev lab'ı veya rootlu Android + NetHunter).
-2. iPhone'dan bir **SSH istemcisi** (ör. Termius, Blink Shell) ile bağlanın.
-3. nmap, OpenVAS, sqlmap, Metasploit, aircrack-ng gibi ağır araçları **orada** çalıştırın.
-4. Hafif keşfi (host/port/DNS/TLS/başlık) iHunter ile **cihazda** yapın.
+1. Stand up a **Kali Linux box** you control (cloud droplet, Raspberry Pi,
+   home lab, or rooted Android + NetHunter).
+2. Connect from the iPhone with an **SSH client** (e.g. Termius, Blink Shell).
+3. Run the heavy tools (nmap, OpenVAS, sqlmap, Metasploit, aircrack-ng) **there**.
+4. Do lightweight recon (host/port/DNS/TLS/headers) **on device** with iHunter.
 
-## Derleme
+## Build
 
-- **Gerekli:** macOS + Xcode 16+ (file-system synchronized groups kullanır).
-- Bir iPhone'a kurmak için ücretsiz bir Apple Developer hesabı yeterlidir.
+- **Required:** macOS + Xcode 16+ (uses file-system synchronized groups).
+- A free Apple Developer account is enough to install it on your own iPhone.
 
 ```bash
 open iHunter.xcodeproj
 ```
 
-Xcode'da: Target → Signing & Capabilities → kendi *Team*'inizi seçin, Bundle
-Identifier'ı benzersiz yapın (`com.ihunter.toolkit` → kendi adınız), ardından
-telefonunuzu seçip **Run** (⌘R).
+In Xcode: Target → Signing & Capabilities → select your own *Team*, make the Bundle
+Identifier unique (`com.ihunter.toolkit` → your own), then pick your phone and **Run** (⌘R).
 
-> İlk taramada iOS "Yerel Ağ" izni ister — tarama için **İzin Ver** deyin.
+> On the first scan iOS asks for "Local Network" permission — tap **Allow** so scanning works.
 
-## Yapı
+## Structure
 
 ```
 iHunter/
 ├── iHunterApp.swift        # @main
-├── ContentView.swift       # araç menüsü
-├── Theme.swift             # koyu "terminal" teması
-├── Services/               # ağ motoru (TCP probe, DNS, TLS, HTTP, kripto)
-└── Views/                  # her araç için bir ekran
+├── ContentView.swift       # tool menu
+├── Theme.swift             # dark "terminal" theme
+├── Services/               # network engine (TCP probe, DNS, TLS, HTTP, crypto)
+└── Views/                  # one screen per tool
 ```

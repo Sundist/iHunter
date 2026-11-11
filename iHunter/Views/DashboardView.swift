@@ -9,17 +9,17 @@ struct DashboardView: View {
                 if let primary = NetworkInfo.primaryWiFiIPv4() {
                     Panel {
                         VStack(alignment: .leading, spacing: 8) {
-                            Label("Birincil IPv4", systemImage: "antenna.radiowaves.left.and.right")
+                            Label("Primary IPv4", systemImage: "antenna.radiowaves.left.and.right")
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(Theme.accent)
                             Text(primary.address)
                                 .font(.system(.title2, design: .monospaced).weight(.bold))
                                 .foregroundStyle(.white)
-                            Text("Arayüz: \(primary.name)  ·  Maske: \(primary.netmask)")
+                            Text("Interface: \(primary.name)  ·  Mask: \(primary.netmask)")
                                 .font(Theme.monoSmall)
                                 .foregroundStyle(.secondary)
                             if let cidr = maskToCIDR(primary.netmask) {
-                                Text("Önerilen tarama aralığı: \(primary.address)/\(cidr)")
+                                Text("Suggested scan range: \(primary.address)/\(cidr)")
                                     .font(Theme.monoSmall)
                                     .foregroundStyle(Theme.info)
                             }
@@ -29,9 +29,9 @@ struct DashboardView: View {
 
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Tüm Arayüzler").font(.headline).foregroundStyle(.white)
+                        Text("All interfaces").font(.headline).foregroundStyle(.white)
                         if interfaces.isEmpty {
-                            Text("Arayüz bulunamadı.").font(.footnote).foregroundStyle(.secondary)
+                            Text("No interfaces found.").font(.footnote).foregroundStyle(.secondary)
                         }
                         ForEach(interfaces) { iface in
                             HStack {

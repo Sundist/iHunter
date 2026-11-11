@@ -88,7 +88,7 @@ struct HostScannerView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Hedef alt ağ").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        Text("Target subnet").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
                         HStack {
                             TextField("192.168.1.0", text: $model.subnet)
                                 .textFieldStyle(.roundedBorder)
@@ -99,14 +99,14 @@ struct HostScannerView: View {
                         Stepper("Prefix: /\(model.cidr)", value: $model.cidr, in: 20...30)
                             .font(.footnote)
                         HStack {
-                            Button("Ağımı doldur") { model.autofill() }
+                            Button("Use my network") { model.autofill() }
                                 .buttonStyle(.bordered)
                             Spacer()
                             if model.isScanning {
-                                Button("Durdur", role: .destructive) { model.stop() }
+                                Button("Stop", role: .destructive) { model.stop() }
                                     .buttonStyle(.borderedProminent)
                             } else {
-                                Button("Tara") { model.start() }
+                                Button("Scan") { model.start() }
                                     .buttonStyle(.borderedProminent)
                                     .disabled(model.subnet.isEmpty)
                             }
@@ -119,7 +119,7 @@ struct HostScannerView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             ProgressView(value: model.progress)
                                 .tint(Theme.accent)
-                            Text("\(model.scannedCount) / \(model.totalCount) adres tarandı · \(model.hosts.count) canlı host")
+                            Text("\(model.scannedCount) / \(model.totalCount) addresses scanned · \(model.hosts.count) live hosts")
                                 .font(Theme.monoSmall).foregroundStyle(.secondary)
                         }
                     }
@@ -132,7 +132,7 @@ struct HostScannerView: View {
                                 Image(systemName: "desktopcomputer").foregroundStyle(Theme.accent)
                                 Text(host.ip).font(Theme.mono.weight(.bold)).foregroundStyle(.white)
                                 Spacer()
-                                TagLabel(text: "\(host.openPorts.count) port", color: Theme.warning)
+                                TagLabel(text: "\(host.openPorts.count) ports", color: Theme.warning)
                             }
                             if let name = host.hostname {
                                 Text(name).font(Theme.monoSmall).foregroundStyle(Theme.info)

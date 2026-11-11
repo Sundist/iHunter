@@ -56,7 +56,7 @@ enum HTTPInspector {
             if let value = lower[name.lowercased()] {
                 return HeaderFinding(header: friendly, present: true, detail: value, severity: .ok)
             }
-            return HeaderFinding(header: friendly, present: false, detail: "Eksik", severity: missingSeverity)
+            return HeaderFinding(header: friendly, present: false, detail: "Missing", severity: missingSeverity)
         }
 
         var findings: [HeaderFinding] = [
@@ -70,10 +70,10 @@ enum HTTPInspector {
 
         // Information disclosure: Server / X-Powered-By expose stack details.
         if let server = lower["server"] {
-            findings.append(HeaderFinding(header: "Server (ifşa)", present: true, detail: server, severity: .warn))
+            findings.append(HeaderFinding(header: "Server (disclosure)", present: true, detail: server, severity: .warn))
         }
         if let powered = lower["x-powered-by"] {
-            findings.append(HeaderFinding(header: "X-Powered-By (ifşa)", present: true, detail: powered, severity: .warn))
+            findings.append(HeaderFinding(header: "X-Powered-By (disclosure)", present: true, detail: powered, severity: .warn))
         }
 
         return HTTPResult(

@@ -21,7 +21,7 @@ struct HTTPHeaderView: View {
                         HStack {
                             Spacer()
                             Button(action: run) {
-                                if isWorking { ProgressView() } else { Text("İncele") }
+                                if isWorking { ProgressView() } else { Text("Inspect") }
                             }
                             .buttonStyle(.borderedProminent)
                             .disabled(url.isEmpty || isWorking)
@@ -40,7 +40,7 @@ struct HTTPHeaderView: View {
                     Panel {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text("Durum").font(.headline).foregroundStyle(.white)
+                                Text("Status").font(.headline).foregroundStyle(.white)
                                 Spacer()
                                 TagLabel(text: "\(result.statusCode)",
                                          color: (200..<300).contains(result.statusCode) ? Theme.accent : Theme.warning)
@@ -52,7 +52,7 @@ struct HTTPHeaderView: View {
 
                     Panel {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Güvenlik başlığı analizi").font(.headline).foregroundStyle(Theme.accent)
+                            Text("Security-header analysis").font(.headline).foregroundStyle(Theme.accent)
                             ForEach(result.findings) { f in
                                 HStack(alignment: .top) {
                                     Image(systemName: icon(f.severity))
@@ -71,7 +71,7 @@ struct HTTPHeaderView: View {
 
                     Panel {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Ham başlıklar (\(result.headers.count))").font(.headline).foregroundStyle(.white)
+                            Text("Raw headers (\(result.headers.count))").font(.headline).foregroundStyle(.white)
                             ForEach(Array(result.headers.enumerated()), id: \.offset) { _, pair in
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(pair.0).font(Theme.monoSmall.weight(.bold)).foregroundStyle(Theme.accent)
@@ -106,7 +106,7 @@ struct HTTPHeaderView: View {
                 await MainActor.run { result = r; isWorking = false }
             } catch {
                 await MainActor.run {
-                    self.error = "İstek başarısız: \(error.localizedDescription)"
+                    self.error = "Request failed: \(error.localizedDescription)"
                     isWorking = false
                 }
             }

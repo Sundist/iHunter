@@ -100,6 +100,6 @@ enum PortCatalog {
     ]
 
     static func service(for port: UInt16) -> String {
-        common.first(where: { $0.port == port })?.service ?? "bilinmiyor"
+        common.first(where: { $0.port == port })?.service ?? "unknown"
     }
 }

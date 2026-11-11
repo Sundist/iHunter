@@ -21,7 +21,7 @@ struct TLSView: View {
                         HStack {
                             Spacer()
                             Button(action: run) {
-                                if isWorking { ProgressView() } else { Text("Bağlan") }
+                                if isWorking { ProgressView() } else { Text("Connect") }
                             }
                             .buttonStyle(.borderedProminent)
                             .disabled(host.isEmpty || isWorking)
@@ -33,9 +33,9 @@ struct TLSView: View {
                     Panel {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text("Güven değerlendirmesi").font(.headline).foregroundStyle(.white)
+                                Text("Trust evaluation").font(.headline).foregroundStyle(.white)
                                 Spacer()
-                                TagLabel(text: result.trusted ? "GÜVENİLİR" : "GÜVENİLMEZ",
+                                TagLabel(text: result.trusted ? "TRUSTED" : "UNTRUSTED",
                                          color: result.trusted ? Theme.accent : Theme.danger)
                             }
                             Text("\(result.host):\(String(result.port)) · \(result.negotiatedProtocol)")
@@ -45,7 +45,7 @@ struct TLSView: View {
 
                     Panel {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Sertifika zinciri (\(result.certificates.count))").font(.headline).foregroundStyle(Theme.accent)
+                            Text("Certificate chain (\(result.certificates.count))").font(.headline).foregroundStyle(Theme.accent)
                             ForEach(result.certificates) { cert in
                                 HStack(alignment: .top) {
                                     TagLabel(text: cert.position == 0 ? "leaf" : "#\(cert.position)",
@@ -59,7 +59,7 @@ struct TLSView: View {
                     }
                 } else if searched && !isWorking {
                     Panel {
-                        Label("TLS bağlantısı kurulamadı veya sertifika okunamadı.", systemImage: "xmark.shield")
+                        Label("Could not establish a TLS connection or read the certificate.", systemImage: "xmark.shield")
                             .font(.footnote).foregroundStyle(Theme.danger)
                     }
                 }

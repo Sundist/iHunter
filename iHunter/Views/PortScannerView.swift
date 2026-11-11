@@ -17,7 +17,7 @@ final class PortScannerModel: ObservableObject {
     @Published var isScanning = false
     @Published var progress: Double = 0
 
-    enum Mode: String, CaseIterable { case common = "Yaygın", range = "Aralık" }
+    enum Mode: String, CaseIterable { case common = "Common", range = "Range" }
 
     private var task: Task<Void, Never>?
 
@@ -81,36 +81,36 @@ struct PortScannerView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Hedef host / IP").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
-                        TextField("scanme.nmap.org veya 192.168.1.1", text: $model.target)
+                        Text("Target host / IP").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        TextField("scanme.nmap.org or 192.168.1.1", text: $model.target)
                             .textFieldStyle(.roundedBorder)
                             .keyboardType(.URL)
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
 
-                        Picker("Mod", selection: $model.mode) {
+                        Picker("Mode", selection: $model.mode) {
                             ForEach(PortScannerModel.Mode.allCases, id: \.self) { Text($0.rawValue).tag($0) }
                         }
                         .pickerStyle(.segmented)
 
                         if model.mode == .range {
                             HStack {
-                                TextField("Başlangıç", text: $model.rangeStart)
+                                TextField("Start", text: $model.rangeStart)
                                     .textFieldStyle(.roundedBorder).keyboardType(.numberPad)
                                 Text("–").foregroundStyle(.secondary)
-                                TextField("Bitiş", text: $model.rangeEnd)
+                                TextField("End", text: $model.rangeEnd)
                                     .textFieldStyle(.roundedBorder).keyboardType(.numberPad)
                             }
-                            Text("Not: Yanıt süresi için aralık 2000 port ile sınırlıdır.")
+                            Text("Note: the range is capped at 2000 ports for responsiveness.")
                                 .font(.caption2).foregroundStyle(.secondary)
                         }
 
                         HStack {
                             Spacer()
                             if model.isScanning {
-                                Button("Durdur", role: .destructive) { model.stop() }.buttonStyle(.borderedProminent)
+                                Button("Stop", role: .destructive) { model.stop() }.buttonStyle(.borderedProminent)
                             } else {
-                                Button("Tara") { model.start() }.buttonStyle(.borderedProminent).disabled(model.target.isEmpty)
+                                Button("Scan") { model.start() }.buttonStyle(.borderedProminent).disabled(model.target.isEmpty)
                             }
                         }
                     }
@@ -125,7 +125,7 @@ struct PortScannerView: View {
                 if !model.results.isEmpty {
                     Panel {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Açık portlar (\(model.results.count))").font(.headline).foregroundStyle(Theme.accent)
+                            Text("Open ports (\(model.results.count))").font(.headline).foregroundStyle(Theme.accent)
                             ForEach(model.results) { p in
                                 HStack {
                                     Image(systemName: "lock.open.fill").foregroundStyle(Theme.accent).font(.caption)
@@ -140,7 +140,7 @@ struct PortScannerView: View {
                     }
                 } else if !model.isScanning && model.progress >= 1 {
                     Panel {
-                        Label("Açık port bulunamadı.", systemImage: "lock.fill")
+                        Label("No open ports found.", systemImage: "lock.fill")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }

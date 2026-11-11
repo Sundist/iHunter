@@ -10,7 +10,7 @@ struct SubnetView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("IPv4 adresi").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        Text("IPv4 address").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
                         TextField("192.168.1.10", text: $ip)
                             .textFieldStyle(.roundedBorder)
                             .keyboardType(.numbersAndPunctuation)
@@ -21,7 +21,7 @@ struct SubnetView: View {
                             Text("/\(Int(cidr))").font(Theme.mono.weight(.bold)).foregroundStyle(Theme.accent)
                         }
                         Slider(value: $cidr, in: 0...32, step: 1).tint(Theme.accent)
-                        Button("Hesapla") { compute() }
+                        Button("Calculate") { compute() }
                             .buttonStyle(.borderedProminent)
                             .frame(maxWidth: .infinity)
                     }
@@ -30,14 +30,14 @@ struct SubnetView: View {
                 if let r = result {
                     Panel {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Sonuç · /\(r.cidr)").font(.headline).foregroundStyle(Theme.accent)
-                            row("Ağ adresi", r.network)
-                            row("Yayın (broadcast)", r.broadcast)
-                            row("İlk host", r.firstHost)
-                            row("Son host", r.lastHost)
-                            row("Alt ağ maskesi", r.netmask)
+                            Text("Result · /\(r.cidr)").font(.headline).foregroundStyle(Theme.accent)
+                            row("Network address", r.network)
+                            row("Broadcast", r.broadcast)
+                            row("First host", r.firstHost)
+                            row("Last host", r.lastHost)
+                            row("Subnet mask", r.netmask)
                             row("Wildcard", r.wildcard)
-                            row("Kullanılabilir host", "\(r.hostCount)")
+                            row("Usable hosts", "\(r.hostCount)")
                         }
                     }
                 }

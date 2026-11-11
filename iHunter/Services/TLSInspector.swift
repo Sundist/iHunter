@@ -57,7 +57,7 @@ enum TLSInspector {
                     trusted = SecTrustEvaluateWithError(trust, nil)
                     if let chain = SecTrustCopyCertificateChain(trust) as? [SecCertificate] {
                         for (idx, cert) in chain.enumerated() {
-                            let summary = (SecCertificateCopySubjectSummary(cert) as String?) ?? "Bilinmeyen özne"
+                            let summary = (SecCertificateCopySubjectSummary(cert) as String?) ?? "Unknown subject"
                             certs.append(TLSCertificate(summary: summary, position: idx))
                         }
                     }

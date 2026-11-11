@@ -19,7 +19,7 @@ final class RepeaterModel: ObservableObject {
         guard !isSending, !url.isEmpty else { return }
         var s = url.trimmingCharacters(in: .whitespacesAndNewlines)
         if !s.lowercased().hasPrefix("http") { s = "https://" + s }
-        guard let u = URL(string: s) else { error = "Geçersiz URL"; return }
+        guard let u = URL(string: s) else { error = "Invalid URL"; return }
 
         isSending = true
         error = nil
@@ -55,10 +55,10 @@ final class RepeaterModel: ObservableObject {
                     .joined(separator: "\n") ?? ""
                 let bodyText = String(decoding: data.prefix(40_000), as: UTF8.self)
                 await MainActor.run {
-                    responseStatus = http.map { "HTTP \($0.statusCode)" } ?? "Yanıt"
+                    responseStatus = http.map { "HTTP \($0.statusCode)" } ?? "Response"
                     responseHeaders = hdrs
-                    responseBody = bodyText.isEmpty ? "(boş gövde)" : bodyText
-                    elapsed = "\(ms) ms · \(data.count) bayt"
+                    responseBody = bodyText.isEmpty ? "(empty body)" : bodyText
+                    elapsed = "\(ms) ms · \(data.count) bytes"
                     isSending = false
                 }
             } catch {
@@ -79,8 +79,8 @@ struct RepeaterView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("İstek").font(.headline).foregroundStyle(Theme.accent)
-                        Picker("Metot", selection: $model.method) {
+                        Text("Request").font(.headline).foregroundStyle(Theme.accent)
+                        Picker("Method", selection: $model.method) {
                             ForEach(model.methods, id: \.self) { Text($0).tag($0) }
                         }
                         .pickerStyle(.menu)
@@ -91,18 +91,18 @@ struct RepeaterView: View {
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
 
-                        Text("Başlıklar (her satır `Ad: Değer`)").font(.caption).foregroundStyle(.secondary)
+                        Text("Headers (one `Name: Value` per line)").font(.caption).foregroundStyle(.secondary)
                         editor($model.headers, minHeight: 70)
 
                         if model.method != "GET" && model.method != "HEAD" {
-                            Text("Gövde").font(.caption).foregroundStyle(.secondary)
+                            Text("Body").font(.caption).foregroundStyle(.secondary)
                             editor($model.body, minHeight: 80)
                         }
 
                         HStack {
                             Spacer()
                             Button(action: model.send) {
-                                if model.isSending { ProgressView() } else { Label("Gönder", systemImage: "paperplane.fill") }
+                                if model.isSending { ProgressView() } else { Label("Send", systemImage: "paperplane.fill") }
                             }
                             .buttonStyle(.borderedProminent)
                             .disabled(model.url.isEmpty || model.isSending)
@@ -126,7 +126,7 @@ struct RepeaterView: View {
                                 Text(model.elapsed).font(Theme.monoSmall).foregroundStyle(.secondary)
                             }
                             if !model.responseHeaders.isEmpty {
-                                Text("Yanıt başlıkları").font(.caption.weight(.semibold)).foregroundStyle(.white)
+                                Text("Response headers").font(.caption.weight(.semibold)).foregroundStyle(.white)
                                 Text(model.responseHeaders).font(Theme.monoSmall).foregroundStyle(.secondary)
                                     .textSelection(.enabled)
                             }
@@ -134,7 +134,7 @@ struct RepeaterView: View {
                     }
                     Panel {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Yanıt gövdesi").font(.caption.weight(.semibold)).foregroundStyle(.white)
+                            Text("Response body").font(.caption.weight(.semibold)).foregroundStyle(.white)
                             Text(model.responseBody).font(Theme.monoSmall).foregroundStyle(.secondary)
                                 .textSelection(.enabled)
                         }

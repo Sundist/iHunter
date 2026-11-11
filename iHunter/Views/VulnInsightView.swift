@@ -20,7 +20,7 @@ final class VulnInsightModel: ObservableObject {
         services = []
         isScanning = true
         progress = 0
-        status = "Portlar ve servisler taranıyor…"
+        status = "Scanning ports and services…"
 
         task = Task {
             let ports = PortCatalog.common.map { $0.port }
@@ -50,7 +50,7 @@ final class VulnInsightModel: ObservableObject {
             var httpFindings: [HeaderFinding] = []
             let webPorts: Set<UInt16> = [80, 443, 8080, 8443, 8000, 8888]
             if observations.contains(where: { webPorts.contains($0.port) }) {
-                status = "HTTP güvenlik başlıkları inceleniyor…"
+                status = "Inspecting HTTP security headers…"
                 if let r = try? await HTTPInspector.inspect(urlString: host) {
                     httpFindings = r.findings
                 }
@@ -58,8 +58,8 @@ final class VulnInsightModel: ObservableObject {
             progress = 1
             findings = VulnRules.evaluate(observations: observations, httpFindings: httpFindings)
             status = observations.isEmpty
-                ? "Açık port bulunamadı."
-                : "Tamamlandı · \(observations.count) servis, \(findings.count) bulgu."
+                ? "No open ports found."
+                : "Done · \(observations.count) services, \(findings.count) findings."
             isScanning = false
         }
     }
@@ -78,20 +78,20 @@ struct VulnInsightView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Hedef host / IP").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
-                        TextField("192.168.1.1 veya example.com", text: $model.target)
+                        Text("Target host / IP").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        TextField("192.168.1.1 or example.com", text: $model.target)
                             .textFieldStyle(.roundedBorder)
                             .keyboardType(.URL)
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
-                        Text("Portları tarar, servis banner'larını okur ve yanlış yapılandırmaları işaretler. Sömürü yapmaz — yalnızca tespit ve bilgilendirme.")
+                        Text("Scans ports, reads service banners, and flags misconfigurations. It does not exploit — detection and reporting only.")
                             .font(.caption2).foregroundStyle(.secondary)
                         HStack {
                             Spacer()
                             if model.isScanning {
-                                Button("Durdur", role: .destructive) { model.stop() }.buttonStyle(.borderedProminent)
+                                Button("Stop", role: .destructive) { model.stop() }.buttonStyle(.borderedProminent)
                             } else {
-                                Button("Analiz et") { model.start() }
+                                Button("Analyze") { model.start() }
                                     .buttonStyle(.borderedProminent)
                                     .disabled(model.target.isEmpty)
                             }
@@ -111,7 +111,7 @@ struct VulnInsightView: View {
                 if !model.findings.isEmpty {
                     Panel {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Özet").font(.headline).foregroundStyle(.white)
+                            Text("Summary").font(.headline).foregroundStyle(.white)
                             HStack(spacing: 8) {
                                 severityChip(.high)
                                 severityChip(.medium)
@@ -135,7 +135,7 @@ struct VulnInsightView: View {
                                         cveKeyword = kw
                                         runCVE()
                                     } label: {
-                                        Label("NVD'de CVE ara: \(kw)", systemImage: "magnifyingglass")
+                                        Label("Search NVD for CVEs: \(kw)", systemImage: "magnifyingglass")
                                             .font(.caption2)
                                     }
                                     .buttonStyle(.bordered)
@@ -155,14 +155,14 @@ struct VulnInsightView: View {
     private var cveSection: some View {
         Panel {
             VStack(alignment: .leading, spacing: 10) {
-                Text("CVE arama (NVD)").font(.headline).foregroundStyle(Theme.info)
+                Text("CVE search (NVD)").font(.headline).foregroundStyle(Theme.info)
                 HStack {
-                    TextField("ör. OpenSSH 8.2", text: $cveKeyword)
+                    TextField("e.g. OpenSSH 8.2", text: $cveKeyword)
                         .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                     Button(action: runCVE) {
-                        if cveLoading { ProgressView() } else { Text("Ara") }
+                        if cveLoading { ProgressView() } else { Text("Search") }
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(cveKeyword.count < 2 || cveLoading)
@@ -184,13 +184,13 @@ struct VulnInsightView: View {
                             .padding(.vertical, 2)
                         }
                     case .empty:
-                        Text("Eşleşen CVE bulunamadı.").font(.caption).foregroundStyle(.secondary)
+                        Text("No matching CVEs found.").font(.caption).foregroundStyle(.secondary)
                     case .failed:
-                        Text("NVD'ye ulaşılamadı (hız limiti/ağ). Birkaç saniye sonra tekrar deneyin.")
+                        Text("Could not reach NVD (rate limit/network). Try again in a few seconds.")
                             .font(.caption).foregroundStyle(Theme.warning)
                     }
                 } else {
-                    Text("Bir ürün/sürüm anahtar kelimesi girin veya bir bulgudaki butona dokunun.")
+                    Text("Enter a product/version keyword, or tap the button on a finding.")
                         .font(.caption2).foregroundStyle(.secondary)
                 }
             }

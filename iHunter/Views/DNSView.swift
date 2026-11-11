@@ -12,7 +12,7 @@ struct DNSView: View {
             VStack(spacing: 14) {
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Alan adı veya IP").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                        Text("Domain or IP").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
                         TextField("example.com", text: $query)
                             .textFieldStyle(.roundedBorder)
                             .keyboardType(.URL)
@@ -22,7 +22,7 @@ struct DNSView: View {
                         HStack {
                             Spacer()
                             Button(action: run) {
-                                if isWorking { ProgressView() } else { Text("Çözümle") }
+                                if isWorking { ProgressView() } else { Text("Resolve") }
                             }
                             .buttonStyle(.borderedProminent)
                             .disabled(query.isEmpty || isWorking)
@@ -33,7 +33,7 @@ struct DNSView: View {
                 if !records.isEmpty {
                     Panel {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Kayıtlar").font(.headline).foregroundStyle(Theme.accent)
+                            Text("Records").font(.headline).foregroundStyle(Theme.accent)
                             ForEach(records) { r in
                                 HStack {
                                     TagLabel(text: r.type, color: r.type == "A" ? Theme.accent : Theme.info)
@@ -49,7 +49,7 @@ struct DNSView: View {
                 if let reverse {
                     Panel {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Ters DNS (PTR)").font(.headline).foregroundStyle(Theme.info)
+                            Text("Reverse DNS (PTR)").font(.headline).foregroundStyle(Theme.info)
                             Text(reverse).font(Theme.monoSmall).foregroundStyle(.white).textSelection(.enabled)
                         }
                     }
@@ -57,7 +57,7 @@ struct DNSView: View {
 
                 if searched && records.isEmpty && reverse == nil && !isWorking {
                     Panel {
-                        Label("Sonuç bulunamadı.", systemImage: "questionmark.circle")
+                        Label("No results found.", systemImage: "questionmark.circle")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }

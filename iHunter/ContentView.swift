@@ -11,17 +11,18 @@ struct Tool: Identifiable {
 
 struct ContentView: View {
     private let tools: [Tool] = [
-        Tool(name: "Ağ Paneli", subtitle: "Cihaz ve yerel ağ bilgisi", systemImage: "wifi", color: Theme.info, destination: AnyView(DashboardView())),
-        Tool(name: "Host Tarayıcı", subtitle: "Yerel ağda canlı cihazları keşfet", systemImage: "dot.radiowaves.left.and.right", color: Theme.accent, destination: AnyView(HostScannerView())),
-        Tool(name: "Port Tarayıcı", subtitle: "TCP açık port taraması", systemImage: "lock.open", color: Theme.warning, destination: AnyView(PortScannerView())),
-        Tool(name: "Zafiyet Analizi", subtitle: "Servis/banner + yanlış yapılandırma + CVE", systemImage: "ladybug", color: Theme.danger, destination: AnyView(VulnInsightView())),
-        Tool(name: "HTTP Repeater", subtitle: "Elle istek oluştur & incele (Burp-lite)", systemImage: "paperplane", color: Theme.warning, destination: AnyView(RepeaterView())),
-        Tool(name: "DNS Çözümleyici", subtitle: "A/AAAA ve ters DNS", systemImage: "globe", color: Theme.info, destination: AnyView(DNSView())),
-        Tool(name: "HTTP Başlık Denetçisi", subtitle: "Güvenlik başlığı analizi", systemImage: "doc.text.magnifyingglass", color: Theme.accent, destination: AnyView(HTTPHeaderView())),
-        Tool(name: "TLS / Sertifika", subtitle: "Sertifika zinciri inceleme", systemImage: "checkmark.seal", color: Theme.info, destination: AnyView(TLSView())),
-        Tool(name: "Subnet Hesaplayıcı", subtitle: "CIDR / alt ağ matematiği", systemImage: "square.grid.3x3", color: Theme.warning, destination: AnyView(SubnetView())),
-        Tool(name: "Kripto & Kodlama", subtitle: "Hash, Base64, Hex, URL", systemImage: "number", color: Theme.accent, destination: AnyView(CryptoView())),
-        Tool(name: "Referans Kütüphanesi", subtitle: "Pentest komut/cheatsheet", systemImage: "books.vertical", color: Theme.info, destination: AnyView(ReferenceView()))
+        Tool(name: "Network Panel", subtitle: "Device and local network info", systemImage: "wifi", color: Theme.info, destination: AnyView(DashboardView())),
+        Tool(name: "Host Scanner", subtitle: "Discover live devices on the LAN", systemImage: "dot.radiowaves.left.and.right", color: Theme.accent, destination: AnyView(HostScannerView())),
+        Tool(name: "Port Scanner", subtitle: "TCP open-port scan", systemImage: "lock.open", color: Theme.warning, destination: AnyView(PortScannerView())),
+        Tool(name: "Vuln Insight", subtitle: "Service/banner + misconfig + CVE", systemImage: "ladybug", color: Theme.danger, destination: AnyView(VulnInsightView())),
+        Tool(name: "Injection Tester", subtitle: "SQLi / XSS detection (authorized)", systemImage: "syringe", color: Theme.danger, destination: AnyView(InjectionTesterView())),
+        Tool(name: "HTTP Repeater", subtitle: "Craft & inspect requests (Burp-lite)", systemImage: "paperplane", color: Theme.warning, destination: AnyView(RepeaterView())),
+        Tool(name: "DNS Resolver", subtitle: "A/AAAA and reverse DNS", systemImage: "globe", color: Theme.info, destination: AnyView(DNSView())),
+        Tool(name: "HTTP Header Inspector", subtitle: "Security-header analysis", systemImage: "doc.text.magnifyingglass", color: Theme.accent, destination: AnyView(HTTPHeaderView())),
+        Tool(name: "TLS / Certificate", subtitle: "Certificate chain inspection", systemImage: "checkmark.seal", color: Theme.info, destination: AnyView(TLSView())),
+        Tool(name: "Subnet Calculator", subtitle: "CIDR / subnet math", systemImage: "square.grid.3x3", color: Theme.warning, destination: AnyView(SubnetView())),
+        Tool(name: "Crypto & Encoding", subtitle: "Hash, Base64, Hex, URL", systemImage: "number", color: Theme.accent, destination: AnyView(CryptoView())),
+        Tool(name: "Reference Library", subtitle: "Pentest tool feasibility & cheatsheet", systemImage: "books.vertical", color: Theme.info, destination: AnyView(ReferenceView()))
     ]
 
     var body: some View {
@@ -86,10 +87,10 @@ private struct ConsentBanner: View {
                 Image(systemName: "exclamationmark.shield.fill")
                     .foregroundStyle(Theme.warning)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Yalnızca yetkili kullanım")
+                    Text("Authorized use only")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.white)
-                    Text("Bu araçları yalnızca sahibi olduğunuz ya da yazılı izin aldığınız sistemlerde kullanın. İzinsiz tarama birçok ülkede suçtur.")
+                    Text("Use these tools only on systems you own or have written permission to test. Unauthorized scanning is a crime in many jurisdictions.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
