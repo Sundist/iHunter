@@ -40,7 +40,7 @@ enum TLSInspector {
                 DispatchQueue.global()
             )
 
-            let params = NWParameters(tls: tlsOptions)
+            let params = NWParameters(tls: tlsOptions, tcp: NWProtocolTCP.Options())
             let connection = NWConnection(
                 host: NWEndpoint.Host(host),
                 port: nwPort,
