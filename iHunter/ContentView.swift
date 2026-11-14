@@ -23,6 +23,7 @@ struct ContentView: View {
         Tool(name: "Subnet Calculator", subtitle: "CIDR / subnet math", systemImage: "square.grid.3x3", color: Theme.warning, destination: AnyView(SubnetView())),
         Tool(name: "Crypto & Encoding", subtitle: "Hash, Base64, Hex, URL", systemImage: "number", color: Theme.accent, destination: AnyView(CryptoView())),
         Tool(name: "Station Control", subtitle: "Drive your Pi/Kali box over HTTP agent", systemImage: "server.rack", color: Theme.accent, destination: AnyView(StationControlView())),
+        Tool(name: "Flipper", subtitle: "Read your Flipper via the Pi agent", systemImage: "wave.3.right", color: Theme.info, destination: AnyView(FlipperView())),
         Tool(name: "Reference Library", subtitle: "Pentest tool feasibility & cheatsheet", systemImage: "books.vertical", color: Theme.info, destination: AnyView(ReferenceView()))
     ]
 

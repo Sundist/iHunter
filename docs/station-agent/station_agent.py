@@ -29,8 +29,10 @@ TOKEN = os.environ.get("STATION_TOKEN", "change-me")
 WIFI = os.environ.get("STATION_WIFI", "wlan1")
 PORT = int(os.environ.get("STATION_PORT", "8777"))
 BIND = os.environ.get("STATION_BIND", "0.0.0.0")
+FLIPPER_DEV = os.environ.get("FLIPPER_DEV", "/dev/ttyACM0")
 
 TARGET_RE = re.compile(r"^[A-Za-z0-9_.:-]{1,255}$")  # host/IP only, no shell metachars
+FPATH_RE = re.compile(r"^/[A-Za-z0-9_./-]{0,128}$")   # Flipper storage path
 
 
 def run(cmd, timeout=25):
@@ -123,6 +125,55 @@ def nmap(target):
     return {"ok": ok, "target": target, "output": out}
 
 
+def flipper_cmd(cmd, timeout=4):
+    """Send one command to the Flipper CLI over USB serial and return output.
+    Needs the Flipper connected to the Pi and python3-serial installed."""
+    try:
+        import serial  # pyserial
+    except ImportError:
+        return (False, "pyserial missing: sudo apt install -y python3-serial")
+    import time
+    try:
+        ser = serial.Serial(FLIPPER_DEV, 230400, timeout=0.3)
+    except Exception as e:  # noqa: BLE001
+        return (False, f"cannot open {FLIPPER_DEV}: {e}")
+    try:
+        ser.reset_input_buffer()
+        ser.write((cmd + "\r\n").encode())
+        time.sleep(0.2)
+        out = b""
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            chunk = ser.read(512)
+            if chunk:
+                out += chunk
+            elif out:
+                break
+        text = out.decode(errors="ignore")
+        # Drop the echoed command line and the trailing ">" prompt.
+        lines = [ln for ln in text.splitlines() if ln.strip() not in ("", ">", cmd)]
+        return (True, "\n".join(lines).strip())
+    finally:
+        ser.close()
+
+
+def flipper_info():
+    ok, out = flipper_cmd("device_info", timeout=4)
+    return {"ok": ok, "output": out}
+
+
+def flipper_battery():
+    ok, out = flipper_cmd("power info", timeout=4)
+    return {"ok": ok, "output": out}
+
+
+def flipper_storage(path):
+    if not FPATH_RE.match(path or ""):
+        return {"error": "invalid path"}
+    ok, out = flipper_cmd("storage list " + path, timeout=5)
+    return {"ok": ok, "path": path, "output": out}
+
+
 class Handler(BaseHTTPRequestHandler):
     def _send(self, code, obj):
         body = json.dumps(obj, indent=2).encode()
@@ -151,6 +202,12 @@ class Handler(BaseHTTPRequestHandler):
         }
         if u.path == "/nmap":
             return self._send(200, nmap((q.get("target") or [""])[0]))
+        if u.path == "/flipper/storage":
+            return self._send(200, flipper_storage((q.get("path") or ["/ext"])[0]))
+        if u.path == "/flipper/info":
+            return self._send(200, flipper_info())
+        if u.path == "/flipper/battery":
+            return self._send(200, flipper_battery())
         fn = routes.get(u.path)
         return self._send(200, fn()) if fn else self._send(404, {"error": "not found"})
 

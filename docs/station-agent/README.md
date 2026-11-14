@@ -17,6 +17,9 @@ station. The iHunter **Station Control** screen calls it to run one-tap actions
 | GET | `/nmap?target=HOST` | `nmap -sV -T4 --top-ports 100 HOST` |
 | POST | `/monitor/start` | `airmon-ng start wlan1` |
 | POST | `/monitor/stop` | `airmon-ng stop wlan1mon` |
+| GET | `/flipper/info` | Flipper `device_info` (over USB serial) |
+| GET | `/flipper/battery` | Flipper `power info` |
+| GET | `/flipper/storage?path=/ext/subghz` | Flipper `storage list PATH` |
 
 There is **no** generic command endpoint by design. Inputs are validated and run
 without a shell, so they can't inject.
@@ -52,3 +55,11 @@ curl -s -H "X-Station-Token: YOUR_TOKEN" http://127.0.0.1:8777/status
 `python3` (stdlib only), plus `aircrack-ng` and `nmap` for those actions.
 Monitor actions need the Alfa adapter and the RTL8812AU driver (see the main
 setup guide, Phase 3).
+
+**Flipper actions** need the Flipper connected to the Pi over USB-C and
+`python3-serial`:
+```bash
+sudo apt install -y python3-serial
+```
+Optionally set the serial device (default `/dev/ttyACM0`) via `FLIPPER_DEV` in
+the service file.
